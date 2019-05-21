@@ -1,0 +1,7 @@
+{
+  "client": "sqlite3",
+  "useNullAsDefault": true,
+  "connection": {
+    "filename": "gamification.sqlite"
+  }
+}
