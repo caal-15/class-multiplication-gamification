@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "create-tables": "node scripts/create-tables.js",
     "pretty": "prettier --single-quote --write **/**.js"
   },
   "repository": {

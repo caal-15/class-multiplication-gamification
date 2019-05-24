@@ -7,9 +7,9 @@ module.exports = db => {
         return { alreadyExists: true, tableName: TABLE_NAME };
       }
       return db.schema
-        .createTable(table => {
+        .createTable(TABLE_NAME, table => {
           table.increments('badgeId');
-          table.integer('userId').notNullable();
+          table.string('userAlias').notNullable();
           table.datetime('badgeTimestamp').notNullable();
           table.string('badge').notNullable();
         })

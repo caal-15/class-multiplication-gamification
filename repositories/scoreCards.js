@@ -7,15 +7,15 @@ module.exports = db => {
         return { alreadyExists: true, tableName: TABLE_NAME };
       }
       return db.schema
-        .createTable(table => {
+        .createTable(TABLE_NAME, table => {
           table.increments('cardId').primary();
-          table.integer('userId').notNullable();
-          table.integer('attemptId').notNullable();
+          table.string('userAlias').notNullable();
+          table.integer('multiplicationId').notNullable();
           table.datetime('scoreTimestamp').notNullable();
           table.integer('score').notNullable();
         })
         .then(() => ({ alreadyExists: false, tableName: TABLE_NAME }))
-        .catch(() => Promise.reject(TABLE_NAME));
+        .catch(err => Promise.reject(TABLE_NAME));
     });
 
   const getTotalScoreForUser = userId =>
