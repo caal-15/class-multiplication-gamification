@@ -1,4 +1,7 @@
+const moment = require('moment');
+
 const TABLE_NAME = 'SCORE_CARDS';
+const DEFAULT_SCORE = 10;
 
 module.exports = db => {
   const createTable = () =>
@@ -15,24 +18,51 @@ module.exports = db => {
           table.integer('score').notNullable();
         })
         .then(() => ({ alreadyExists: false, tableName: TABLE_NAME }))
-        .catch(err => Promise.reject(TABLE_NAME));
+        .catch(() => Promise.reject(TABLE_NAME));
     });
 
-  const getTotalScoreForUser = userId =>
+  const createScoreCard = scoreCard =>
+    db(TABLE_NAME).insert({
+      score: DEFAULT_SCORE,
+      scoreTimestamp: moment().format(),
+      ...scoreCard
+    });
+
+  const getTotalScoreForUser = userAlias =>
     db(TABLE_NAME)
-      .where({ userId })
+      .where({ userAlias })
       .sum('score');
+
+  const getUserScoreCards = (
+    userAlias,
+    orderBy = 'scoreTimestamp',
+    order = 'desc'
+  ) =>
+    db(TABLE_NAME)
+      .where({ userAlias })
+      .orderBy(orderBy, order);
 
   const getLeaderboard = () =>
     db(TABLE_NAME)
-      .select('userId')
-      .distinct('userId')
-      .then(userIds => {});
+      .select('userAlias')
+      .distinct('userAlias')
+      .then(userAliases =>
+        Promise.all(
+          userAliases.map(userAlias =>
+            getTotalScoreForUser(userAlias).then(userScore => ({
+              userScore,
+              userAlias
+            }))
+          )
+        )
+      );
 
   return {
     TABLE_NAME,
     createTable,
     getTotalScoreForUser,
-    getLeaderboard
+    getLeaderboard,
+    createScoreCard,
+    getUserScoreCards
   };
 };

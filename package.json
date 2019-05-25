@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "create-tables": "node scripts/create-tables.js",
-    "pretty": "prettier --single-quote --write **/**.js"
+    "pretty": "prettier --single-quote --write **/**.js",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
@@ -23,9 +24,11 @@
   },
   "homepage": "https://github.com/caal-15/class-multiplication-gamification#readme",
   "dependencies": {
+    "amqplib": "^0.5.3",
     "express": "^4.16.4",
     "husky": "^2.2.0",
     "knex": "^0.16.5",
+    "moment": "^2.24.0",
     "nodemon": "^1.19.0",
     "prettier": "^1.17.0",
     "sqlite3": "^4.0.8"

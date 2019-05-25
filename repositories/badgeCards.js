@@ -1,3 +1,4 @@
+const moment = require('moment');
 const TABLE_NAME = 'BADGE_CARDS';
 
 module.exports = db => {
@@ -17,14 +18,22 @@ module.exports = db => {
         .catch(() => Promise.reject(TABLE_NAME));
     });
 
-  const getUserBadges = (userId, orderBy = 'badgeTimestamp', order = 'desc') =>
+  const createBadge = badge =>
+    db(TABLE_NAME).insert({ badgeTimestamp: moment().format(), ...badge });
+
+  const getUserBadges = (
+    userAlias,
+    orderBy = 'badgeTimestamp',
+    order = 'desc'
+  ) =>
     db(TABLE_NAME)
-      .where({ userId })
+      .where({ userAlias })
       .orderBy(orderBy, order);
 
   return {
     TABLE_NAME,
     createTable,
-    getUserBadges
+    getUserBadges,
+    createBadge
   };
 };
