@@ -1,7 +1,7 @@
 const moment = require('moment');
 
 const TABLE_NAME = 'SCORE_CARDS';
-const DEFAULT_SCORE = 10;
+const DEFAULT_SCORE = 100;
 
 module.exports = db => {
   const createTable = () =>
@@ -31,7 +31,10 @@ module.exports = db => {
   const getTotalScoreForUser = userAlias =>
     db(TABLE_NAME)
       .where({ userAlias })
-      .sum('score');
+      .sum('score as totalScore')
+      .then(scores => {
+        return scores[0].totalScore || 0;
+      });
 
   const getUserScoreCards = (
     userAlias,
@@ -46,15 +49,18 @@ module.exports = db => {
     db(TABLE_NAME)
       .select('userAlias')
       .distinct('userAlias')
-      .then(userAliases =>
+      .then(scoreCards =>
         Promise.all(
-          userAliases.map(userAlias =>
-            getTotalScoreForUser(userAlias).then(userScore => ({
-              userScore,
-              userAlias
+          scoreCards.map(scoreCard =>
+            getTotalScoreForUser(scoreCard.userAlias).then(totalScore => ({
+              totalScore,
+              userAlias: scoreCard.userAlias
             }))
           )
         )
+      )
+      .then(totalScores =>
+        totalScores.sort((a, b) => -(a.totalScore - b.totalScore))
       );
 
   return {
